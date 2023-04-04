@@ -1,6 +1,5 @@
 import Navbar from "./Navbar";
-import axie from "../tile.jpeg";
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import MarketplaceJSON from "../Marketplace.json";
 import axios from "axios";
 import { useState } from "react";
@@ -76,7 +75,6 @@ export default function NFTPage(props) {
 
             //Pull the deployed contract instance
             let contract = new ethers.Contract(MarketplaceJSON.address, MarketplaceJSON.abi, signer);
-            const salePrice = ethers.utils.parseUnits(data.price, 'ether')
             updateMessage("Buying the NFT... Please Wait (Upto 5 mins)")
             //run the executeSale function
             let transaction = await contract.transferNFT(tokenId, recieverAddress);
@@ -117,7 +115,7 @@ export default function NFTPage(props) {
                         Seller: <span className="text-sm">{data.seller}</span>
                     </div>
                     <div>
-                        {currAddress == data.owner || currAddress == data.seller ?
+                        {currAddress === data.owner || currAddress === data.seller ?
                             <div className="text-emerald-700">
                                 You are the owner of this NFT
                                 <br></br>

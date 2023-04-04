@@ -1,8 +1,4 @@
-import axie from "../tile.jpeg";
-import {
-    BrowserRouter as Router,
-    Link,
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function NFTTile(data) {
     const newTo = {
