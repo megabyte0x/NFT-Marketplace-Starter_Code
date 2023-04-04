@@ -106,7 +106,7 @@ function Navbar() {
         </ul>
       </nav>
       <div className='text-white text-bold text-right mr-10 text-sm'>
-        {currAddress !== "0x" ? "Connected to" : "Not Connected. Please login to view NFTs"} {currAddress !== "0x" ? (currAddress.substring(0, 15) + '...') : ""}
+        {currAddress !== "0x" ? "Connected to" : "Not Connected. Please login to view NFTs"} {currAddress !== "0x" ? currAddress : ""}
       </div>
     </div>
   );
