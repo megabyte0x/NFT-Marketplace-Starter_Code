@@ -16,7 +16,6 @@ export default function ListNFT() {
     const [fileURL, setFileURL] = useState(null);
     const ethers = require("ethers");
     const [message, updateMessage] = useState('');
-    const [currentSigner, updateSigner] = useState();
 
     /**
      * @notice Uploads the NFT image to IPFS when a file is selected.
@@ -76,12 +75,12 @@ export default function ListNFT() {
         //Upload data to IPFS
         try {
             const metadataURL = await uploadMetadataToIPFS();
-            updateSigner(await getSigner());
-            updateMessage("Please wait.. uploading (upto 5 mins)")
+            const signer = await getSigner();
+            updateMessage("Please wait.. uploading (upto 1 min)")
 
-            console.log(currentSigner)
+            console.log(signer)
             //Pull the deployed contract instance
-            let contract = new ethers.Contract(Marketplace.address, Marketplace.abi, currentSigner)
+            let contract = new ethers.Contract(Marketplace.address, Marketplace.abi, signer)
 
             //massage the params to be sent to the create NFT request
             const price = ethers.utils.parseUnits(formParams.price, 'ether')
@@ -102,7 +101,6 @@ export default function ListNFT() {
         }
     }
 
-    console.log("Working", process.env);
     return (
         <div className="">
             <Navbar></Navbar>
@@ -119,7 +117,7 @@ export default function ListNFT() {
                     </div>
                     <div className="mb-6">
                         <label className="block text-purple-500 text-sm font-bold mb-2" htmlFor="price">Price (in Matic)</label>
-                        <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="number" placeholder="Min 0.01 ETH" step="0.01" value={formParams.price} onChange={e => updateFormParams({ ...formParams, price: e.target.value })}></input>
+                        <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="number" placeholder="Min 0.01 MATIC" step="0.01" value={formParams.price} onChange={e => updateFormParams({ ...formParams, price: e.target.value })}></input>
                     </div>
                     <div>
                         <label className="block text-purple-500 text-sm font-bold mb-2" htmlFor="image">Upload Image</label>
