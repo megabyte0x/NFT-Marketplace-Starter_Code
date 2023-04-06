@@ -1,12 +1,9 @@
 import './App.css';
-import Navbar from './components/Navbar.js';
-import Marketplace from './components/Marketplace';
-import Profile from './components/Profile';
-import ListNFT from './components/ListNFT';
-import NFTPage from './components/NFTpage';
-import ReactDOM from "react-dom/client";
+import Marketplace from './components/Marketplace.js';
+import Profile from './components/Profile.js';
+import ListNFT from './components/ListNFT.js';
+import NFTPage from './components/NFTpage.js';
 import {
-  BrowserRouter,
   Routes,
   Route,
 } from "react-router-dom";

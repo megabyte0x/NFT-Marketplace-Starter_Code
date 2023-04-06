@@ -1,14 +1,23 @@
-import Navbar from "./Navbar";
-import NFTTile from "./NFTTile";
-import MarketplaceJSON from "../Marketplace.json";
 import axios from "axios";
 import { useState } from "react";
+import { ethers } from "ethers";
+
+import Navbar from "./Navbar.js";
+import NFTTile from "./NFTTile.js";
+
+import { getSigner } from "../paper.js";
+
+import MarketplaceJSON from "../Marketplace.json";
 
 const axiosInstance = axios.create({
     baseURL: 'https://cors-anywhere.herokuapp.com/https://gateway.pinata.cloud',
 });
 
 
+/**
+ * @notice Marketplace component displays a list of NFTs available for sale.
+ * @return {JSX.Element} Returns the JSX element containing the Marketplace component.
+ */
 export default function Marketplace() {
     const sampleData = [
         {
@@ -42,12 +51,14 @@ export default function Marketplace() {
     const [data, updateData] = useState(sampleData);
     const [dataFetched, updateFetched] = useState(false);
 
+    /**
+    * @notice This function fetches all available NFTs from the smart contract.
+    * @dev If the data is not fetched yet, this function is called.
+    */
     async function getAllNFTs() {
-        const ethers = require("ethers");
-        //After adding your Hardhat network to your metamask, this code will get providers and signers
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
+        const signer = await getSigner();
         //Pull the deployed contract instance
+
         let contract = new ethers.Contract(MarketplaceJSON.address, MarketplaceJSON.abi, signer)
         //create an NFT Token
         let transaction = await contract.getAllNFTs()
@@ -55,6 +66,7 @@ export default function Marketplace() {
         //Fetch all the details of every NFT from the contract and display
         const items = await Promise.all(transaction.map(async i => {
             const tokenURI = await contract.tokenURI(i.tokenId);
+            // fetching image with cors proxy
             let meta = await axiosInstance.get(tokenURI);
             meta = meta.data;
 

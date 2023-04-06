@@ -1,10 +1,19 @@
-import Navbar from "./Navbar";
-import { useParams } from 'react-router-dom';
-import MarketplaceJSON from "../Marketplace.json";
 import axios from "axios";
+import { useParams } from 'react-router-dom';
+import { ethers } from "ethers";
 import { useState } from "react";
-import NFTTile from "./NFTTile";
 
+import NFTTile from "./NFTTile.js";
+import Navbar from "./Navbar.js";
+
+import { getSigner, getUser } from "../paper.js";
+
+import MarketplaceJSON from "../Marketplace.json";
+
+/**
+ * @notice Profile component displays the user's wallet address, total value of NFTs, and the NFTs they own.
+ * @return {JSX.Element} Returns the JSX element containing the Profile component.
+ */
 export default function Profile() {
     const [data, updateData] = useState([]);
     const [dataFetched, updateFetched] = useState(false);
@@ -12,12 +21,10 @@ export default function Profile() {
     const [totalPrice, updateTotalPrice] = useState("0");
 
     async function getNFTData(tokenId) {
-        const ethers = require("ethers");
         let sumPrice = 0;
-        //After adding your Hardhat network to your metamask, this code will get providers and signers
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const addr = await signer.getAddress();
+
+        const signer = await getSigner();
+        const addr = await getUser().then((res) => res.walletAddress);
 
         //Pull the deployed contract instance
         let contract = new ethers.Contract(MarketplaceJSON.address, MarketplaceJSON.abi, signer)
@@ -25,11 +32,7 @@ export default function Profile() {
         //create an NFT Token
         let transaction = await contract.getMyNFTs()
 
-        /*
-        * Below function takes the metadata from tokenURI and the data returned by getMyNFTs() contract function
-        * and creates an object of information that is to be displayed
-        */
-
+        //create an object of information to display
         const items = await Promise.all(transaction.map(async i => {
             const tokenURI = await contract.tokenURI(i.tokenId);
             let meta = await axios.get(tokenURI);

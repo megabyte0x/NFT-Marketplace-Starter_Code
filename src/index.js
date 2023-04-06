@@ -1,17 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import reportWebVitals from './reportWebVitals.js';
 import {
   BrowserRouter,
   Routes,
   Route,
 } from "react-router-dom";
-import ListNFT from './components/ListNFT';
-import Marketplace from './components/Marketplace';
-import Profile from './components/Profile';
-import NFTPage from './components/NFTpage';
+import ListNFT from './components/ListNFT.js';
+import Marketplace from './components/Marketplace.js';
+import Profile from './components/Profile.js';
+import NFTPage from './components/NFTpage.js';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

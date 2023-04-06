@@ -1,15 +1,27 @@
-import Navbar from "./Navbar";
 import { useState } from "react";
-import { uploadFileToIPFS, uploadJSONToIPFS } from "../pinata";
+
+import Navbar from "./Navbar.js";
+
+import { uploadFileToIPFS, uploadJSONToIPFS } from "../pinata.js";
+import { getSigner } from "../paper.js";
+
 import Marketplace from '../Marketplace.json';
 
+/**
+ * @title ListNFT Component
+ * @notice A React component that allows users to list their NFTs for sale on the marketplace.
+ */
 export default function ListNFT() {
     const [formParams, updateFormParams] = useState({ name: '', description: '', price: '' });
     const [fileURL, setFileURL] = useState(null);
     const ethers = require("ethers");
     const [message, updateMessage] = useState('');
+    const [currentSigner, updateSigner] = useState();
 
-    //This function uploads the NFT image to IPFS
+    /**
+     * @notice Uploads the NFT image to IPFS when a file is selected.
+     * @param e The event object containing the selected file.
+     */
     async function OnChangeFile(e) {
         var file = e.target.files[0];
         //check for file extension
@@ -26,7 +38,11 @@ export default function ListNFT() {
         }
     }
 
-    //This function uploads the metadata to IPFS
+    /**
+   * @notice Uploads the NFT metadata to IPFS.
+   * @dev This function uploads the metadata JSON object to IPFS using the Pinata API.
+   * @return The Pinata URL of the uploaded metadata JSON.
+   */
     async function uploadMetadataToIPFS() {
         const { name, description, price } = formParams;
         //Make sure that none of the fields are empty
@@ -50,19 +66,22 @@ export default function ListNFT() {
         }
     }
 
+    /**
+     * @notice Creates and lists the NFT on the marketplace.
+     * @param e The event object to prevent the default form submission behavior.
+     */
     async function listNFT(e) {
         e.preventDefault();
 
         //Upload data to IPFS
         try {
             const metadataURL = await uploadMetadataToIPFS();
-            //After adding your Hardhat network to your metamask, this code will get providers and signers
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            const signer = provider.getSigner();
+            updateSigner(await getSigner());
             updateMessage("Please wait.. uploading (upto 5 mins)")
 
+            console.log(currentSigner)
             //Pull the deployed contract instance
-            let contract = new ethers.Contract(Marketplace.address, Marketplace.abi, signer)
+            let contract = new ethers.Contract(Marketplace.address, Marketplace.abi, currentSigner)
 
             //massage the params to be sent to the create NFT request
             const price = ethers.utils.parseUnits(formParams.price, 'ether')
@@ -99,7 +118,7 @@ export default function ListNFT() {
                         <textarea className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" cols="40" rows="5" id="description" type="text" placeholder="Axie Infinity Collection" value={formParams.description} onChange={e => updateFormParams({ ...formParams, description: e.target.value })}></textarea>
                     </div>
                     <div className="mb-6">
-                        <label className="block text-purple-500 text-sm font-bold mb-2" htmlFor="price">Price (in ETH)</label>
+                        <label className="block text-purple-500 text-sm font-bold mb-2" htmlFor="price">Price (in Matic)</label>
                         <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="number" placeholder="Min 0.01 ETH" step="0.01" value={formParams.price} onChange={e => updateFormParams({ ...formParams, price: e.target.value })}></input>
                     </div>
                     <div>

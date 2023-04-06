@@ -1,5 +1,10 @@
 import { Link } from "react-router-dom";
 
+/**
+ * @notice NFTTile component displays a single NFT as a tile, linking to the NFT's detail page.
+ * @param {Object} data - The NFT data object.
+ * @return {JSX.Element} Returns the JSX element containing the NFTTile component.
+ */
 function NFTTile(data) {
     const newTo = {
         pathname: "/nftPage/" + data.data.tokenId
